@@ -16,9 +16,13 @@ public class PlayerController : MonoBehaviour
     public bool IsGrounded;
     public bool WasGrounded;
     public bool IsSprinting;
+    public bool IsOnSlope;
     private float CheckGroundDelay = 0.1f;
     private Vector3 m_GroundNormal;
     private float m_LastTimeJumped;
+    private float SlopeForce = 20f;
+    private float SlopeForceRayLength = 1f;
+    private CharacterController playerController;
 
     // Start is called before the first frame update
     void Start()
@@ -26,6 +30,8 @@ public class PlayerController : MonoBehaviour
         IsGrounded = true;
         WasGrounded = true;
         IsSprinting = false;
+        IsOnSlope = false;
+        playerController = GetComponent<CharacterController>();
     }
 
     // Update is called once per frame
@@ -70,12 +76,29 @@ public class PlayerController : MonoBehaviour
             //Jump        
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                
+
                 // then, add the jumpSpeed value upwards
                 PlayerVelocity += Vector3.up * JumpForce;
                 m_LastTimeJumped = Time.time;
                 IsGrounded = false;
             }
+
+            // Slope Check 
+            if (m_GroundNormal != Vector3.up)
+            {
+                IsOnSlope = true;
+                PlayerVelocity += Vector3.down * SlopeForce * Time.deltaTime;
+            }
+            else
+                IsOnSlope = false;
+
+            
+                //if(Physics.Raycast(transform.position - Vector3.up, Vector3.down, out RaycastHit hit, GroundCheckDistance + (PlayerVelocity * Time.deltaTime).magnitude)){
+                //    if()
+                //}
+
+            
+           
         }
         else
         {
@@ -87,7 +110,7 @@ public class PlayerController : MonoBehaviour
 
 
         }
-        transform.position += PlayerVelocity * Time.deltaTime;
+        playerController.Move(PlayerVelocity * Time.deltaTime);
         WasGrounded = IsGrounded;
     }
 
@@ -133,3 +156,62 @@ public class PlayerController : MonoBehaviour
     }
 
 }
+
+
+//WIP
+
+//if (IsSprinting)
+//{
+//    targetForwardVelocity *= SprintMultiplier;
+//    targetVelocity = targetForwardVelocity + targetLateralVelocity;
+//    targetVelocity = Vector3.ClampMagnitude(targetVelocity, 1.0f) * VitesseMax;
+//    //targetVelocity = GetDirectionReorientedOnSlope(targetVelocity.normalized, m_GroundNormal) * targetVelocity.magnitude;
+//    PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
+//}
+//else
+//{
+//    //targetVelocity = GetDirectionReorientedOnSlope(targetVelocity.normalized, m_GroundNormal) * targetVelocity.magnitude;
+//    targetVelocity = Vector3.ClampMagnitude(targetVelocity, 1.0f) * VitesseMax;
+//    PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
+//}
+//// start by canceling out the vertical component of our velocity
+//PlayerVelocity = new Vector3(PlayerVelocity.x, 0f, PlayerVelocity.z);
+////Jump        
+//if (Input.GetKeyDown(KeyCode.Space))
+//{
+
+//    // then, add the jumpSpeed value upwards
+//    PlayerVelocity += Vector3.up * JumpForce;
+//    m_LastTimeJumped = Time.time;
+//    IsGrounded = false;
+//}
+
+//// Slope Check 
+//if (m_GroundNormal != Vector3.up)
+//{
+//    IsOnSlope = true;
+//    PlayerVelocity += Vector3.down * SlopeForce * Time.deltaTime;
+//}
+//else
+//    IsOnSlope = false;
+
+            
+//                //if(Physics.Raycast(transform.position - Vector3.up, Vector3.down, out RaycastHit hit, GroundCheckDistance + (PlayerVelocity * Time.deltaTime).magnitude)){
+//                //    if()
+//                //}
+
+            
+           
+//        }
+//        else
+//{
+//    targetVelocity = Vector3.ClampMagnitude(targetVelocity, 1.0f) * VitesseMax;
+//    PlayerVelocity += new Vector3(targetVelocity.x * Time.deltaTime * AirAcceleration, 0, targetVelocity.z * Time.deltaTime * AirAcceleration);
+//    //Appliquer la gravité
+//    PlayerVelocity += Vector3.down * GravtiyForce * Time.deltaTime;
+
+
+
+//}
+//playerController.Move(PlayerVelocity * Time.deltaTime);
+//WasGrounded = IsGrounded;
