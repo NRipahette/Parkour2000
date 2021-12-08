@@ -621,10 +621,10 @@ GameObject:
   m_Component:
   - component: {fileID: 752897680}
   - component: {fileID: 752897681}
+  - component: {fileID: 752897676}
   - component: {fileID: 752897679}
   - component: {fileID: 752897678}
   - component: {fileID: 752897677}
-  - component: {fileID: 752897676}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -649,12 +649,13 @@ MonoBehaviour:
   GroundCheckDistance: 0.05
   JumpForce: 20
   VitesseMax: 10
-  Friction: 20
+  Friction: 15
   AirAcceleration: 1
   SprintMultiplier: 2.5
   IsGrounded: 1
   WasGrounded: 1
   IsSprinting: 0
+  IsOnSlope: 0
 --- !u!136 &752897677
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -664,7 +665,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 752897675}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
@@ -726,29 +727,31 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 752897675}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.31, y: 7.68, z: 5.65}
+  m_LocalPosition: {x: -24.1, y: 4, z: 5.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 963194228}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &752897681
-Rigidbody:
+--- !u!143 &752897681
+CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 752897675}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
   serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
