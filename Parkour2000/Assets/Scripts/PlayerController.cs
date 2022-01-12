@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
             if (IsSprinting)
             {
                 targetForwardVelocity *= SprintMultiplier;
-                targetVelocity = targetForwardVelocity + targetLateralVelocity;                
+                targetVelocity = targetForwardVelocity + targetLateralVelocity;
                 PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
             }
             else
@@ -90,10 +90,10 @@ public class PlayerController : MonoBehaviour
             else
                 IsOnSlope = false;
 
-            
 
-            
-           
+
+
+
         }
         else
         {
@@ -106,6 +106,7 @@ public class PlayerController : MonoBehaviour
 
         }
         playerController.Move(PlayerVelocity * Time.deltaTime);
+        HeadBumpCheck();
         WasGrounded = IsGrounded;
     }
 
@@ -141,6 +142,16 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+    }
+    void HeadBumpCheck()
+    {
+        Debug.DrawLine(transform.position + Vector3.up, (transform.position + Vector3.up) + Vector3.up * GroundCheckDistance, Color.red, 10f);
+        // if we're grounded, collect info about the ground normal with a downward capsule cast representing our character capsule
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.up, out RaycastHit hit, GroundCheckDistance))
+        {
+            PlayerVelocity = new Vector3(PlayerVelocity.x, -0.5f, PlayerVelocity.z);
+        }
+
     }
 
     //Calcul de pente 
