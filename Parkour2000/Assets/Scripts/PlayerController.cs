@@ -6,10 +6,10 @@ public class PlayerController : MonoBehaviour
 {
     public Vector3 PlayerVelocity;
     public float GravtiyForce = 20f;
-    public float GroundCheckDistance = 0.05f;
+    public float GroundCheckDistance = 0.1f;
     public float JumpForce = 90f;
     public float VitesseMax = 10f;
-    public float Friction = 2f;
+    public float Friction = 20f;
     public float AirAcceleration = 1f;
     public float SprintMultiplier = 2.5f;
     float pSpeed;
@@ -17,10 +17,10 @@ public class PlayerController : MonoBehaviour
     public bool WasGrounded;
     public bool IsSprinting;
     public bool IsOnSlope;
-    private float CheckGroundDelay = 0.1f;
+    private float CheckGroundDelay = 0.05f;
     private Vector3 m_GroundNormal;
     private float m_LastTimeJumped;
-    private float SlopeForce = 20f;
+    private float SlopeForce = 600f;
     private float SlopeForceRayLength = 1f;
     private CharacterController playerController;
 
@@ -62,13 +62,11 @@ public class PlayerController : MonoBehaviour
             if (IsSprinting)
             {
                 targetForwardVelocity *= SprintMultiplier;
-                targetVelocity = targetForwardVelocity + targetLateralVelocity;
-                //targetVelocity = GetDirectionReorientedOnSlope(targetVelocity.normalized, m_GroundNormal) * targetVelocity.magnitude;
+                targetVelocity = targetForwardVelocity + targetLateralVelocity;                
                 PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
             }
             else
             {
-                //targetVelocity = GetDirectionReorientedOnSlope(targetVelocity.normalized, m_GroundNormal) * targetVelocity.magnitude;
                 PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
             }
             // start by canceling out the vertical component of our velocity
@@ -93,9 +91,6 @@ public class PlayerController : MonoBehaviour
                 IsOnSlope = false;
 
             
-                //if(Physics.Raycast(transform.position - Vector3.up, Vector3.down, out RaycastHit hit, GroundCheckDistance + (PlayerVelocity * Time.deltaTime).magnitude)){
-                //    if()
-                //}
 
             
            
@@ -156,62 +151,3 @@ public class PlayerController : MonoBehaviour
     }
 
 }
-
-
-//WIP
-
-//if (IsSprinting)
-//{
-//    targetForwardVelocity *= SprintMultiplier;
-//    targetVelocity = targetForwardVelocity + targetLateralVelocity;
-//    targetVelocity = Vector3.ClampMagnitude(targetVelocity, 1.0f) * VitesseMax;
-//    //targetVelocity = GetDirectionReorientedOnSlope(targetVelocity.normalized, m_GroundNormal) * targetVelocity.magnitude;
-//    PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
-//}
-//else
-//{
-//    //targetVelocity = GetDirectionReorientedOnSlope(targetVelocity.normalized, m_GroundNormal) * targetVelocity.magnitude;
-//    targetVelocity = Vector3.ClampMagnitude(targetVelocity, 1.0f) * VitesseMax;
-//    PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
-//}
-//// start by canceling out the vertical component of our velocity
-//PlayerVelocity = new Vector3(PlayerVelocity.x, 0f, PlayerVelocity.z);
-////Jump        
-//if (Input.GetKeyDown(KeyCode.Space))
-//{
-
-//    // then, add the jumpSpeed value upwards
-//    PlayerVelocity += Vector3.up * JumpForce;
-//    m_LastTimeJumped = Time.time;
-//    IsGrounded = false;
-//}
-
-//// Slope Check 
-//if (m_GroundNormal != Vector3.up)
-//{
-//    IsOnSlope = true;
-//    PlayerVelocity += Vector3.down * SlopeForce * Time.deltaTime;
-//}
-//else
-//    IsOnSlope = false;
-
-            
-//                //if(Physics.Raycast(transform.position - Vector3.up, Vector3.down, out RaycastHit hit, GroundCheckDistance + (PlayerVelocity * Time.deltaTime).magnitude)){
-//                //    if()
-//                //}
-
-            
-           
-//        }
-//        else
-//{
-//    targetVelocity = Vector3.ClampMagnitude(targetVelocity, 1.0f) * VitesseMax;
-//    PlayerVelocity += new Vector3(targetVelocity.x * Time.deltaTime * AirAcceleration, 0, targetVelocity.z * Time.deltaTime * AirAcceleration);
-//    //Appliquer la gravité
-//    PlayerVelocity += Vector3.down * GravtiyForce * Time.deltaTime;
-
-
-
-//}
-//playerController.Move(PlayerVelocity * Time.deltaTime);
-//WasGrounded = IsGrounded;
