@@ -19,8 +19,12 @@ public class PlayerController : MonoBehaviour
 	public float SprintMultiplier = 2.5f;
 	public float CrouchMultiplier = 0.5f;
 	public float SlidingMultiplier = 2f;
-	private float standingHeight = 1.8f;
-	private float crouchingHeight = 1.2f;
+	private float crouchingHeight = 1.5f;
+	private Vector3 standingCenter = new Vector3(0, 0, 0);
+	private float standingHeight = 2f;
+	private Vector3 crouchingCenter = new Vector3(0, -0.25f, 0);
+	private float slidingHeight = 1f;
+	private Vector3 slidingCenter = new Vector3(0, -0.5f, 0);
 	public float interpolationCrouchFrames = 45f;
 	public Vector3 crouchingView;
 	public Vector3 slidingView;
@@ -136,12 +140,18 @@ public class PlayerController : MonoBehaviour
 			t = (float)elapsedFrames / interpolationCrouchFrames;
 			playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, crouchingView, 0.01f);
 			elapsedFrames = (elapsedFrames + 1) % (interpolationCrouchFrames + 1f);
+
+			playerController.height = crouchingHeight;
+			playerController.center = crouchingCenter;
 		}
 		else if(!IsSliding)
 		{
 			t = (float)elapsedFrames / interpolationCrouchFrames;
 			playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, standingView, 0.01f);
 			elapsedFrames = (elapsedFrames + 1) % (interpolationCrouchFrames + 1f);
+
+			playerController.height = standingHeight;
+			playerController.center = standingCenter;
 		}
 
 
@@ -150,16 +160,18 @@ public class PlayerController : MonoBehaviour
 		GroundCheck();
 		if (IsGrounded)
 		{
-			temp = Vector3.Cross(m_GroundNormal, Vector3.down);
-			groundSlopeDir = Vector3.Cross(temp, m_GroundNormal);
-			groundSlopeAngle = Vector3.Angle(m_GroundNormal, Vector3.up);
-			//transform.Rotate(transform.right,groundSlopeAngle);
-			transform.rotation = Quaternion.Euler(new Vector3(-groundSlopeAngle, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z));
+			//temp = Vector3.Cross(m_GroundNormal, Vector3.down);
+			//groundSlopeDir = Vector3.Cross(temp, m_GroundNormal);
+			//groundSlopeAngle = Vector3.Angle(m_GroundNormal, Vector3.up);
+			//transform.rotation = Quaternion.Euler(new Vector3(-groundSlopeAngle, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z));
 
 			if (IsSliding && !startedSliding)
 			{
 				slidingStartTime = Time.time;
 				startedSliding = true;
+
+				playerController.height = slidingHeight;
+				playerController.center = slidingCenter;
 
 				t = (float)elapsedFrames / interpolationCrouchFrames;
 				playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, slidingView, 0.01f);
@@ -184,6 +196,9 @@ public class PlayerController : MonoBehaviour
 			{
 				startedSliding = false;
 				IsSliding = false;
+
+				playerController.height = standingHeight;
+				playerController.center = standingCenter;
 
 				t = (float)elapsedFrames / interpolationCrouchFrames;
 				playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, standingView, 0.01f);
@@ -224,11 +239,12 @@ public class PlayerController : MonoBehaviour
 			PlayerVelocity = new Vector3(PlayerVelocity.x, 0f, PlayerVelocity.z);
 
 			// Slope Check 
-			if (m_GroundNormal != Vector3.up)
+			if (m_GroundNormal != Vector3.up && IsGrounded)
 			{
 				IsOnSlope = true;
 				//JumpForce = SlopeJumpForce;
 				PlayerVelocity += Vector3.down * SlopeForce * Time.deltaTime;
+				//PlayerVelocity = Vector3.ProjectOnPlane(PlayerVelocity, m_GroundNormal);
 				Debug.DrawLine(transform.position, transform.position + PlayerVelocity, Color.green);
 			}
 			else
