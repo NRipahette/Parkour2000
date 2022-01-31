@@ -1046,7 +1046,7 @@ MonoBehaviour:
   CrouchMultiplier: 0.5
   SlidingMultiplier: 2.5
   interpolationCrouchFrames: 45
-  crouchingView: {x: 0, y: 0, z: 0}
+  crouchingView: {x: 0, y: -0.5, z: 0}
   slidingView: {x: 0, y: -0.5, z: 0}
   standingView: {x: 0, y: 0.5, z: 0}
   IsGrounded: 1

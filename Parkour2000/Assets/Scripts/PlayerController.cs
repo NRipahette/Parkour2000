@@ -19,10 +19,10 @@ public class PlayerController : MonoBehaviour
 	public float SprintMultiplier = 2.5f;
 	public float CrouchMultiplier = 0.5f;
 	public float SlidingMultiplier = 2f;
-	private float crouchingHeight = 1.5f;
-	private Vector3 standingCenter = new Vector3(0, 0, 0);
 	private float standingHeight = 2f;
-	private Vector3 crouchingCenter = new Vector3(0, -0.25f, 0);
+	private Vector3 standingCenter = new Vector3(0, 0, 0);
+	private float crouchingHeight = 1f;
+	private Vector3 crouchingCenter = new Vector3(0, -0.5f, 0);
 	private float slidingHeight = 1f;
 	private Vector3 slidingCenter = new Vector3(0, -0.5f, 0);
 	public float interpolationCrouchFrames = 45f;
@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour
 			IsCrouching = false;
 		}
 
-		if (Input.GetKeyDown(KeyCode.LeftAlt) && !IsCrouching)
+		if (Input.GetKeyDown(KeyCode.LeftAlt) && !IsCrouching && IsGrounded)
 		{
 			IsSliding = true;
 		}
