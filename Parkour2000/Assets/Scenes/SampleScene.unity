@@ -172,14 +172,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 5849922797170906021, guid: 4f91eac4ef1ea204abc45705b1201fdb, type: 3}
-      propertyPath: VitesseMaxWallRun
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 5849922797170906021, guid: 4f91eac4ef1ea204abc45705b1201fdb, type: 3}
-      propertyPath: GroundCheckDistance
-      value: 0.1
-      objectReference: {fileID: 0}
     - target: {fileID: 5849922797170906041, guid: 4f91eac4ef1ea204abc45705b1201fdb, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -224,8 +216,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5849922798211505378, guid: 4f91eac4ef1ea204abc45705b1201fdb, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f91eac4ef1ea204abc45705b1201fdb, type: 3}
 --- !u!1 &228663418
 GameObject:

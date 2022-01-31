@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -19,7 +21,6 @@ public class PlayerController : MonoBehaviour
     public float AirAcceleration = 1f;
     public float SprintMultiplier = 2.5f;
     public bool IsGrounded;
-    public bool WasGrounded;
     public bool IsSprinting;
     public bool IsOnSlope;
     public bool IsTouchingAWall;
@@ -36,12 +37,12 @@ public class PlayerController : MonoBehaviour
     private Collider wallHit;
     private RaycastHit RayWall;
     private GameObject cameraFPS;
-
+    private GameObject Spawn;
+    private GameObject pauseMenu;
     // Start is called before the first frame update
     void Start()
     {
         IsGrounded = true;
-        WasGrounded = true;
         IsSprinting = false;
         IsOnSlope = false;
         useGravity = true;
@@ -49,6 +50,9 @@ public class PlayerController : MonoBehaviour
         WallRunHitboxCollider = transform.Find("WallRunHitbox").GetComponent<BoxCollider>();
         playerController = GetComponent<CharacterController>();
         cameraFPS = GameObject.Find("Main Camera");
+        Spawn = GameObject.Find("SpawnPosition");
+        pauseMenu = GameObject.Find("PauseMenu");
+        pauseMenu.SetActive(false);
     }
 
     // Update is called once per frame
@@ -110,26 +114,33 @@ public class PlayerController : MonoBehaviour
         }
         else if (IsAttachedToWall)
         {
-
-            PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, transform.forward * Input.GetAxis("Vertical") * VitesseMaxWallRun, Time.deltaTime * WallFriction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, transform.forward * Input.GetAxis("Vertical") * VitesseMaxWallRun, Time.deltaTime * WallFriction).z);
-            //PlayerVelocity += targetForwardVelocity * WallRunForce * Time.deltaTime;
-            //PlayerVelocity += -RayWall.normal * WallRunForce / 5 * Time.deltaTime; // Colle le joueur au mur
-            PlayerVelocity = Vector3.ProjectOnPlane(PlayerVelocity, RayWall.normal); // Colle le joueur au mur
-            //PlayerVelocity = Vector3.ClampMagnitude(PlayerVelocity, VitesseMaxWallRun);
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (!IsTouchingAWall)
             {
-                if(Vector3.Dot(cameraFPS.transform.forward, Vector3.up) > 0.866f) // Si regard vers le haut alors saute uniquement vers le haut proche du mur
-                {
-                    PlayerVelocity += (Vector3.up * JumpForce);
-
-                }
-                else
-                {
-                    PlayerVelocity += RayWall.normal * JumpForce + (Vector3.up * JumpForce); // Sinon saute en s'éloignant du mur
-                }
-                useGravity = true;
                 IsAttachedToWall = false;
-                wallHit = null;
+            }
+            else
+            {
+
+                PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, transform.forward * Input.GetAxis("Vertical") * VitesseMaxWallRun, Time.deltaTime * WallFriction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, transform.forward * Input.GetAxis("Vertical") * VitesseMaxWallRun, Time.deltaTime * WallFriction).z);
+                //PlayerVelocity += targetForwardVelocity * WallRunForce * Time.deltaTime;
+                //PlayerVelocity += -RayWall.normal * WallRunForce / 5 * Time.deltaTime; // Colle le joueur au mur
+                PlayerVelocity = Vector3.ProjectOnPlane(PlayerVelocity, RayWall.normal); // Colle le joueur au mzur
+                                                                                         //PlayerVelocity = Vector3.ClampMagnitude(PlayerVelocity, VitesseMaxWallRun);
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    if (Vector3.Dot(cameraFPS.transform.forward, Vector3.up) > 0.756f) // Si regard vers le haut alors saute uniquement vers le haut proche du mur
+                    {
+                        PlayerVelocity += (Vector3.up * JumpForce * 1.5f);
+
+                    }
+                    else
+                    {
+                        PlayerVelocity += RayWall.normal * JumpForce + (Vector3.up * JumpForce); // Sinon saute en s'éloignant du mur
+                    }
+                    useGravity = true;
+                    IsAttachedToWall = false;
+                    wallHit = null;
+                }
             }
 
         }
@@ -140,6 +151,8 @@ public class PlayerController : MonoBehaviour
                 StartWallRun(wallHit);
 
             }
+            //Gravité
+            PlayerVelocity += Vector3.down * GravtiyForce * Time.deltaTime;
         }
         else
         {
@@ -151,9 +164,20 @@ public class PlayerController : MonoBehaviour
 
         playerController.Move(PlayerVelocity * Time.deltaTime);
         HeadBumpCheck();
-        WasGrounded = IsGrounded;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+         {
+            PauseGame();
+         }
     }
 
+    private void PauseGame()
+    {
+        pauseMenu.SetActive(true);
+        Time.timeScale = 0;
+        GameObject.Find("PlayingHUD").SetActive(false);
+    }
+    
 
     void GroundCheck()
     {
@@ -169,6 +193,7 @@ public class PlayerController : MonoBehaviour
             // if we're grounded, collect info about the ground normal with a downward capsule cast representing our character capsule
             if (Physics.Raycast(transform.position - Vector3.up, Vector3.down, out RaycastHit hit, GroundCheckDistance + (PlayerVelocity * Time.deltaTime).magnitude))
             {
+            if(hit.transform.name != "RespawnCollider")
                 IsGrounded = true;
                 // storing the upward direction for the surface found
                 m_GroundNormal = hit.normal;
@@ -207,6 +232,7 @@ public class PlayerController : MonoBehaviour
             IsTouchingAWall = true;
 
         }
+        
     }
 
     private void OnTriggerExit(Collider other)
@@ -218,6 +244,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void Respawn () 
+    {
+        SceneManager.GetActiveScene(); SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
 
     //void WallCheck()
     //{
