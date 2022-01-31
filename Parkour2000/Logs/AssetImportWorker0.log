@@ -7421,3 +7421,67 @@ AssetImportParameters requested are different than current active one (requested
   custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
   custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 1110.223366 seconds.
+  path: Assets/Cartoon_Texture_Pack/ROOF
+  artifactKey: Guid(edc3fad11e07c0242ba526a789dff0f2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Cartoon_Texture_Pack/ROOF using Guid(edc3fad11e07c0242ba526a789dff0f2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '949d61fed9de87d6c42e81fb7ea86d4f') in 0.004636 seconds 
+  Import took 0.007171 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 6.888189 seconds.
+  path: Assets/Cartoon_Texture_Pack/SAND
+  artifactKey: Guid(60f5891069bad284fb969cddff4bd6b1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Cartoon_Texture_Pack/SAND using Guid(60f5891069bad284fb969cddff4bd6b1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1b0e3df1d216d14c74ef894d0e9e5148') in 0.001302 seconds 
+  Import took 0.003323 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 2.180633 seconds.
+  path: Assets/Cartoon_Texture_Pack/WALLS
+  artifactKey: Guid(682068d913e867d448c585ad5cbef6e6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Cartoon_Texture_Pack/WALLS using Guid(682068d913e867d448c585ad5cbef6e6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'dcb95bdbd65006ac1bb3a86514995896') in 0.001424 seconds 
+  Import took 0.003525 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.980469 seconds.
+  path: Assets/Cartoon_Texture_Pack/WALLS/WALL_Stone
+  artifactKey: Guid(88a6f02d80e67cf4b8f07c47093e6167) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Cartoon_Texture_Pack/WALLS/WALL_Stone using Guid(88a6f02d80e67cf4b8f07c47093e6167) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ab8e82f567c248a0f0dc5f1c0d8e53b4') in 0.001540 seconds 
+  Import took 0.003740 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.612216 seconds.
+  path: Assets/Cartoon_Texture_Pack/WALLS/WALL_Stone/Materials
+  artifactKey: Guid(1dadadd20718678459d8f4c72287709d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Cartoon_Texture_Pack/WALLS/WALL_Stone/Materials using Guid(1dadadd20718678459d8f4c72287709d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f528c92998fb3cac704bf85bff20d627') in 0.001338 seconds 
+  Import took 0.003570 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.080446 seconds.
+  path: Assets/Cartoon_Texture_Pack/WALLS/WALL_Stone/Materials/Wall_Stone_A.mat
+  artifactKey: Guid(5ffe771db4b6b1a4babbbb27cd18facc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Cartoon_Texture_Pack/WALLS/WALL_Stone/Materials/Wall_Stone_A.mat using Guid(5ffe771db4b6b1a4babbbb27cd18facc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'de9bd838bcc38f2ba0378b276034d839') in 0.090758 seconds 
+  Import took 0.093280 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000228 seconds.
+  path: Assets/Cartoon_Texture_Pack/WALLS/WALL_Stone/Materials/Wall_Stone_B.mat
+  artifactKey: Guid(b747383878001c94dbaf7aa522f19c05) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Cartoon_Texture_Pack/WALLS/WALL_Stone/Materials/Wall_Stone_B.mat using Guid(b747383878001c94dbaf7aa522f19c05) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c84ddd1dbebef6979e0d4455deb9c3f4') in 0.023544 seconds 
+  Import took 0.025870 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000175 seconds.
+  path: Assets/Cartoon_Texture_Pack/WALLS/WALL_Stone/Materials/Wall_Stone_C.mat
+  artifactKey: Guid(7566f004765b64046b3b33e2c3513c6e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Cartoon_Texture_Pack/WALLS/WALL_Stone/Materials/Wall_Stone_C.mat using Guid(7566f004765b64046b3b33e2c3513c6e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2789fcbdecf2ec21665ccf19aabb192e') in 0.022704 seconds 
+  Import took 0.024978 seconds .
+
