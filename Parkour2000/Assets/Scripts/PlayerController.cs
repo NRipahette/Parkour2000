@@ -6,20 +6,16 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    //public Vector3 PlayerVelocity;
     public float playerHeight = 2f;
     public float playerwidth = 1f;
     public float GravtiyForce = 20f;
-    //public float GroundCheckDistance = 0.1f;
     public float WallCheckDistance = 0.5f;
-    //public float JumpForce = 90f;
     public float WallRunForce = 10f;
-    //public float VitesseMax = 10f;
+  
     public float VitesseMaxWallRun = 8f;
-    //public float Friction = 20f;
+  
     public float WallFriction = 10f;
-    //public float AirAcceleration = 1f;
-    //public float SprintMultiplier = 2.5f;
+   
     public bool IsGrounded;
     public bool IsSprinting;
     public bool IsOnSlope;
@@ -28,30 +24,19 @@ public class PlayerController : MonoBehaviour
     public bool IsJumping;
     public bool IsCrouching;
     public bool IsSliding;
-    private bool useGravity;
-    //private float CheckGroundDelay = 0.05f;
-    //private Vector3 m_GroundNormal;
-    //private float m_LastTimeJumped;
-    //private float SlopeForce = 600f;
-    //private float SlopeForceRayLength = 1f;
     private CharacterController playerController;
-    private BoxCollider WallRunHitboxCollider;
     private Collider wallHit;
     private RaycastHit RayWall;
     private GameObject cameraFPS;
-    private GameObject Spawn;
     private GameObject pauseMenu;
     public Vector3 PlayerVelocity;
     public float CurrentSpeed;
     public float GravityForce = 20f;
     public float GroundCheckDistance = 0.1f;
     public float JumpForce;
-    public float baseJumpForce;
     public float SlopeJumpForce;
     public float VitesseMax = 25f;
     public float Friction;
-    public float SlidingFriction;
-    public float baseFriction;
     public float AirAcceleration = 1f;
     public float SprintMultiplier = 2.5f;
     public float CrouchMultiplier = 0.5f;
@@ -66,7 +51,6 @@ public class PlayerController : MonoBehaviour
     public Vector3 crouchingView;
     public Vector3 slidingView;
     public Vector3 standingView;
-    public bool WasGrounded;
     private bool startedSliding;
     private float CheckGroundDelay = 0.05f;
     public Vector3 m_GroundNormal;
@@ -77,32 +61,21 @@ public class PlayerController : MonoBehaviour
     public float slidingLength;
     float elapsedFrames;
 
-    public Vector3 temp;
-    public Vector3 groundSlopeDir;
-    public float groundSlopeAngle;
-
-
-
-
-
-
 
     private Vector3 targetForwardVelocity;
     private Vector3 targetLateralVelocity;
     private Vector3 targetVelocity;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         IsGrounded = true;
         IsSprinting = false;
         IsOnSlope = false;
-        useGravity = true;
+
         IsJumping = false;
-        WallRunHitboxCollider = transform.Find("WallRunHitbox").GetComponent<BoxCollider>();
         playerController = GetComponent<CharacterController>();
         cameraFPS = GameObject.Find("Main Camera");
-        Spawn = GameObject.Find("SpawnPosition");
         pauseMenu = GameObject.Find("PauseMenu");
         pauseMenu.SetActive(false);
     }
@@ -276,7 +249,6 @@ public class PlayerController : MonoBehaviour
                 {
                     PlayerVelocity += RayWall.normal * JumpForce + (Vector3.up * JumpForce); // Sinon saute en s'éloignant du mur
                 }
-                useGravity = true;
                 IsAttachedToWall = false;
                 wallHit = null;
             }
@@ -475,7 +447,6 @@ public class PlayerController : MonoBehaviour
     void StartWallRun(Collider wallHit)
     {
         IsAttachedToWall = true;
-        useGravity = false;
         PlayerVelocity = new Vector3(PlayerVelocity.x, 0, PlayerVelocity.z);
         if(wallHit != null)
         wallHit.Raycast(new Ray(transform.position, wallHit.ClosestPoint(transform.position) - transform.position), out RayWall, 5f);
@@ -490,7 +461,6 @@ public class PlayerController : MonoBehaviour
     void StopWallRun()
     {
         IsAttachedToWall = false;
-        useGravity = true;
     }
 
     //Calcul de pente 
