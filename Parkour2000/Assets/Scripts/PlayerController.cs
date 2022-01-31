@@ -40,12 +40,8 @@ public class PlayerController : MonoBehaviour
 	public Vector3 m_GroundNormal;
 	private float m_LastTimeJumped;
 	public float SlopeForce = 1000f;
-	private float SlopeForceRayLength = 1f;
 	private CharacterController playerController;
 	public GameObject playerView;
-	public Material slide_m;
-	public Material normal_m;
-	private MeshRenderer renderer;
 	private float slidingStartTime;
 	public float slidingLength;
 	float elapsedFrames;
@@ -54,15 +50,18 @@ public class PlayerController : MonoBehaviour
 	public Vector3 groundSlopeDir;
 	public float groundSlopeAngle;
 
+	private Vector3 targetForwardVelocity;
+	private Vector3 targetLateralVelocity;
+	private Vector3 targetVelocity;
+
 	// Start is called before the first frame update
-	void Start()
+	void Awake()
 	{
 		IsGrounded = true;
 		WasGrounded = true;
 		IsSprinting = false;
 		IsOnSlope = false;
 		playerController = GetComponent<CharacterController>();
-		renderer = GetComponent<MeshRenderer>();
 		IsCrouching = false;
 		IsSliding = false;
 		Friction = baseFriction;
@@ -74,200 +73,33 @@ public class PlayerController : MonoBehaviour
 	void Update()
 	{
 		CurrentSpeed = Mathf.Abs(PlayerVelocity.magnitude);
-		if (Input.GetKey(KeyCode.LeftShift) && !IsSliding)
-		{
-			IsSprinting = true;
-		}
-		else
-		{
-			IsSprinting = false;
-		}
 
-		if (Input.GetKey(KeyCode.W) && !IsSliding)
-		{
-			IsCrouching = true;
+		Input_Check_Movement();
+		Input_Check_Sprint();
+		Input_Check_Crouch();
+		Input_Check_Slide();
 
-		}
-		else
-		{
-			IsCrouching = false;
-		}
-
-		if (Input.GetKeyDown(KeyCode.LeftAlt) && !IsCrouching && IsGrounded)
-		{
-			IsSliding = true;
-		}
-
-
-		//if (IsSliding && Time.time - slidingStartTime >= slidingLength)
-		//{
-		//	float t = slidingLength / 10.0f;
-		//	Friction = baseFriction;
-		//	IsSliding = false;
-		//	CurrentSpeed = VitesseMax * CrouchMultiplier;
-		//	renderer.material = normal_m;
-		//	Friction = Mathf.Lerp(Friction, baseFriction, 0.001f);
-		//}
-		////if (IsSliding && Friction > baseFriction - 0.01f)
-		////{
-		////	IsSliding = false;
-		////	Friction = baseFriction;
-		////	renderer.material = normal_m;
-		////}
-		//else if (CurrentSpeed >= VitesseMax * SlidingMultiplier && IsCrouching && !IsSliding)
-		//{
-		//	slidingStartTime = Time.time;
-		//	IsSliding = true;
-		//	Friction = SlidingFriction;
-		//	renderer.material = slide_m;
-		//}
-
-
-
-
-		// calculate the desired velocity from inputs, max speed, and current slope
-		Vector3 targetForwardVelocity = Input.GetAxis("Vertical") * transform.forward * VitesseMax;
-
-		Vector3 targetLateralVelocity = Input.GetAxis("Horizontal") * transform.right * VitesseMax;
-
-		//Vector3 targetUpwardVelocity = JumpForce *  Vector3.up ;
-		Vector3 targetVelocity = targetForwardVelocity + targetLateralVelocity;
-
-
-		float t;
-		if (IsCrouching)
-		{
-			t = (float)elapsedFrames / interpolationCrouchFrames;
-			playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, crouchingView, 0.01f);
-			elapsedFrames = (elapsedFrames + 1) % (interpolationCrouchFrames + 1f);
-
-			playerController.height = crouchingHeight;
-			playerController.center = crouchingCenter;
-		}
-		else if(!IsSliding)
-		{
-			t = (float)elapsedFrames / interpolationCrouchFrames;
-			playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, standingView, 0.01f);
-			elapsedFrames = (elapsedFrames + 1) % (interpolationCrouchFrames + 1f);
-
-			playerController.height = standingHeight;
-			playerController.center = standingCenter;
-		}
-
-
-		
 
 		GroundCheck();
 		if (IsGrounded)
 		{
-			//temp = Vector3.Cross(m_GroundNormal, Vector3.down);
-			//groundSlopeDir = Vector3.Cross(temp, m_GroundNormal);
-			//groundSlopeAngle = Vector3.Angle(m_GroundNormal, Vector3.up);
-			//transform.rotation = Quaternion.Euler(new Vector3(-groundSlopeAngle, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z));
 
-			if (IsSliding && !startedSliding)
-			{
-				slidingStartTime = Time.time;
-				startedSliding = true;
-
-				playerController.height = slidingHeight;
-				playerController.center = slidingCenter;
-
-				t = (float)elapsedFrames / interpolationCrouchFrames;
-				playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, slidingView, 0.01f);
-				elapsedFrames = (elapsedFrames + 1) % (interpolationCrouchFrames + 1f);
-
-				targetForwardVelocity *= SlidingMultiplier;
-				targetVelocity = targetForwardVelocity + targetLateralVelocity;
-				PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
-
-			}
-			else if (startedSliding && Time.time - slidingStartTime < slidingLength)
-			{
-				t = (float)elapsedFrames / interpolationCrouchFrames;
-				playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, slidingView, 0.01f);
-				elapsedFrames = (elapsedFrames + 1) % (interpolationCrouchFrames + 1f);
-
-				targetForwardVelocity *= SlidingMultiplier;
-				targetVelocity = targetForwardVelocity + targetLateralVelocity;
-				PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
-			}
-			else if (startedSliding && Time.time - slidingStartTime >= slidingLength)
-			{
-				startedSliding = false;
-				IsSliding = false;
-
-				playerController.height = standingHeight;
-				playerController.center = standingCenter;
-
-				t = (float)elapsedFrames / interpolationCrouchFrames;
-				playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, standingView, 0.01f);
-				elapsedFrames = (elapsedFrames + 1) % (interpolationCrouchFrames + 1f);
-			}
-
-			if (IsSprinting)
-			{
-				targetForwardVelocity *= SprintMultiplier;
-				targetVelocity = targetForwardVelocity + targetLateralVelocity;
-				PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
-			}
-			if (IsCrouching)
-			{
-				if (IsSliding)
-				{
-					targetForwardVelocity *= SlidingMultiplier;
-					targetLateralVelocity *= SlidingMultiplier;
-					targetVelocity = targetForwardVelocity + targetLateralVelocity;
-					PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
-
-				}
-				else
-				{
-					targetForwardVelocity *= CrouchMultiplier;
-					targetLateralVelocity *= CrouchMultiplier;
-					targetVelocity = targetForwardVelocity + targetLateralVelocity;
-					PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
-
-				}
-			}
-			else
-			{
-				PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
-			}
+			Crouch_Check();
+			Sprint_Check();
+			Slide_Check();
 
 			// start by canceling out the vertical component of our velocity
 			PlayerVelocity = new Vector3(PlayerVelocity.x, 0f, PlayerVelocity.z);
 
 			// Slope Check 
-			if (m_GroundNormal != Vector3.up && IsGrounded)
-			{
-				IsOnSlope = true;
-				//JumpForce = SlopeJumpForce;
-				PlayerVelocity += Vector3.down * SlopeForce * Time.deltaTime;
-				//PlayerVelocity = Vector3.ProjectOnPlane(PlayerVelocity, m_GroundNormal);
-				Debug.DrawLine(transform.position, transform.position + PlayerVelocity, Color.green);
-			}
-			else
-			{
-				IsOnSlope = false;
-				//JumpForce = baseJumpForce;
-			}
-			//Jump        
-			if (Input.GetKeyDown(KeyCode.Space))
-			{
-				// start by canceling out the vertical component of our velocity
-				PlayerVelocity = new Vector3(PlayerVelocity.x, 0f, PlayerVelocity.z);
+			Slope_Check();
 
-				// then, add the jumpSpeed value upwards
-				PlayerVelocity += Vector3.up * JumpForce;
-				m_LastTimeJumped = Time.time;
-				IsGrounded = false;
-			}
+			//Jump        
+			Input_Check_Jump();
 
 		}
 		else
 		{
-
 			PlayerVelocity += new Vector3(targetVelocity.x * Time.deltaTime * AirAcceleration, 0, targetVelocity.z * Time.deltaTime * AirAcceleration);
 			//Appliquer la gravité
 			PlayerVelocity += Vector3.down * GravityForce * Time.deltaTime;
@@ -281,13 +113,187 @@ public class PlayerController : MonoBehaviour
 
 	}
 
+	void Input_Check_Sprint()
+	{
+		if (Input.GetKey(KeyCode.LeftShift) && !IsSliding)
+		{
+			IsSprinting = true;
+		}
+		else
+		{
+			IsSprinting = false;
+		}
+	}
+
+	void Input_Check_Crouch()
+	{
+		if (Input.GetKey(KeyCode.W) && !IsSliding)
+		{
+			IsCrouching = true;
+
+		}
+		else
+		{
+			IsCrouching = false;
+		}
+	}
+
+	void Input_Check_Slide()
+	{
+		if (Input.GetKeyDown(KeyCode.LeftAlt) && !IsCrouching && IsGrounded)
+		{
+			IsSliding = true;
+		}
+	}
+
+	void Input_Check_Jump()
+	{
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			// start by canceling out the vertical component of our velocity
+			PlayerVelocity = new Vector3(PlayerVelocity.x, 0f, PlayerVelocity.z);
+
+			// then, add the jumpSpeed value upwards
+			PlayerVelocity += Vector3.up * JumpForce;
+			m_LastTimeJumped = Time.time;
+			IsGrounded = false;
+		}
+	}
+
+	void Input_Check_Movement()
+	{
+		// calculate the desired velocity from inputs, max speed, and current slope
+		targetForwardVelocity = Input.GetAxis("Vertical") * transform.forward * VitesseMax;
+
+		targetLateralVelocity = Input.GetAxis("Horizontal") * transform.right * VitesseMax;
+
+		//Vector3 targetUpwardVelocity = JumpForce *  Vector3.up ;
+		targetVelocity = targetForwardVelocity + targetLateralVelocity;
+	}
+
+	void Crouch_Check()
+	{
+		float t;
+		if (IsCrouching)
+		{
+			t = (float)elapsedFrames / interpolationCrouchFrames;
+			playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, crouchingView, 0.01f);
+			elapsedFrames = (elapsedFrames + 1) % (interpolationCrouchFrames + 1f);
+
+			playerController.height = crouchingHeight;
+			playerController.center = crouchingCenter;
+		}
+		else if (!IsSliding)
+		{
+			t = (float)elapsedFrames / interpolationCrouchFrames;
+			playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, standingView, 0.01f);
+			elapsedFrames = (elapsedFrames + 1) % (interpolationCrouchFrames + 1f);
+
+			playerController.height = standingHeight;
+			playerController.center = standingCenter;
+		}
+
+		if (IsCrouching)
+		{
+			if (IsSliding)
+			{
+				targetForwardVelocity *= SlidingMultiplier;
+				targetLateralVelocity *= SlidingMultiplier;
+				targetVelocity = targetForwardVelocity + targetLateralVelocity;
+				PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
+
+			}
+			else
+			{
+				targetForwardVelocity *= CrouchMultiplier;
+				targetLateralVelocity *= CrouchMultiplier;
+				targetVelocity = targetForwardVelocity + targetLateralVelocity;
+				PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
+			}
+		}
+		else
+		{
+			PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
+		}
+	}
+
+	void Slide_Check()
+	{
+		float t;
+		if (IsSliding && !startedSliding)
+		{
+			slidingStartTime = Time.time;
+			startedSliding = true;
+
+			playerController.height = slidingHeight;
+			playerController.center = slidingCenter;
+
+			t = (float)elapsedFrames / interpolationCrouchFrames;
+			playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, slidingView, 0.01f);
+			elapsedFrames = (elapsedFrames + 1) % (interpolationCrouchFrames + 1f);
+
+			targetForwardVelocity *= SlidingMultiplier;
+			targetVelocity = targetForwardVelocity + targetLateralVelocity;
+			PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
+
+		}
+		else if (startedSliding && Time.time - slidingStartTime < slidingLength)
+		{
+			t = (float)elapsedFrames / interpolationCrouchFrames;
+			playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, slidingView, 0.01f);
+			elapsedFrames = (elapsedFrames + 1) % (interpolationCrouchFrames + 1f);
+
+			targetForwardVelocity *= SlidingMultiplier;
+			targetVelocity = targetForwardVelocity + targetLateralVelocity;
+			PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
+		}
+		else if (startedSliding && Time.time - slidingStartTime >= slidingLength)
+		{
+			startedSliding = false;
+			IsSliding = false;
+
+			playerController.height = standingHeight;
+			playerController.center = standingCenter;
+
+			t = (float)elapsedFrames / interpolationCrouchFrames;
+			playerView.transform.localPosition = Vector3.Lerp(playerView.transform.localPosition, standingView, 0.01f);
+			elapsedFrames = (elapsedFrames + 1) % (interpolationCrouchFrames + 1f);
+		}
+	}
+
+	void Sprint_Check()
+	{
+		if (IsSprinting)
+		{
+			targetForwardVelocity *= SprintMultiplier;
+			targetVelocity = targetForwardVelocity + targetLateralVelocity;
+			PlayerVelocity = new Vector3(Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).x, PlayerVelocity.y, Vector3.Lerp(PlayerVelocity, targetVelocity, Time.deltaTime * Friction).z);
+		}
+	}
+
+	void Slope_Check()
+	{
+		if (m_GroundNormal != Vector3.up && IsGrounded)
+		{
+			IsOnSlope = true;
+			//JumpForce = SlopeJumpForce;
+			PlayerVelocity += Vector3.down * SlopeForce * Time.deltaTime;
+			//PlayerVelocity = Vector3.ProjectOnPlane(PlayerVelocity, m_GroundNormal);
+		}
+		else
+		{
+			IsOnSlope = false;
+			//JumpForce = baseJumpForce;
+		}
+	}
+
 	void GroundCheck()
 	{
 
 		// reset values before the ground check
 		IsGrounded = false;
 		m_GroundNormal = Vector3.up;
-		
+
 		// only try to detect ground if it's been a short amount of time since last jump; otherwise we may snap to the ground instantly after we try jumping
 		if (Time.time >= m_LastTimeJumped + CheckGroundDelay)
 		{
